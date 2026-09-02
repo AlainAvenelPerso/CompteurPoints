@@ -1,1 +1,99 @@
-<div class="container"><h1>Compteur de points</h1><div class="add-player"><input type="text" placeholder="Nom du joueur" [(ngModel)]="newPlayer" (keyup.enter)="addPlayer()"><button (click)="addPlayer()">Ajouter</button></div><div class="toolbar"><button (click)="toggleSort()">Tri : {{ sortOrder === 'asc' ? 'Croissant' : 'Décroissant' }}</button><button class="btn-clear" (click)="clearPlayers()" *ngIf="players.length > 0">Vider la liste</button></div><div *ngFor="let player of players" class="player-card" [style.background-color]="player.color"><div class="card-header"><ng-container *ngIf="editingId !== player.id"><span class="player-name">{{player.name}}</span><button class="btn-edit" (click)="startEdit(player)" title="Renommer">✏️</button></ng-container><ng-container *ngIf="editingId === player.id"><input class="edit-input" [(ngModel)]="editingName" (keyup.enter)="confirmEdit(player)" (keyup.escape)="cancelEdit()" autofocus><div class="edit-actions"><label class="color-label">Couleur : <input type="color" [(ngModel)]="player.color"></label><button class="btn-ok" (click)="confirmEdit(player)">✔ Valider</button><button class="btn-cancel" (click)="cancelEdit()">✖ Annuler</button><button class="btn-delete" (click)="deletePlayer(player.id)">🗑 Supprimer</button></div></ng-container></div><div class="card-score"><ng-container *ngIf="scoreEditId !== player.id"><button class="btn-minus" (click)="removePoints(player)">−</button><span class="score clickable" (click)="openScoreEdit(player)" title="Modifier le score">{{player.score}}</span><button class="btn-plus" (click)="addPoints(player)">+</button><button class="btn-undo" *ngIf="canUndo(player)" (click)="undoScore(player)" title="Annuler le dernier score">↩</button></ng-container><ng-container *ngIf="scoreEditId === player.id"><div class="score-edit"><div class="score-edit-modes"><button [class.active]="scoreMode==='add'" (click)="scoreMode='add'">+ Ajouter</button><button [class.active]="scoreMode==='sub'" (click)="scoreMode='sub'">− Retirer</button><button [class.active]="scoreMode==='set'" (click)="scoreMode='set'">=  Remplacer</button></div><input class="score-input" type="number" [(ngModel)]="scoreInput" autofocus (keyup.enter)="confirmScoreEdit()" (keyup.escape)="closeScoreEdit()"><div class="score-preview"><span class="preview-old">{{player.score}}</span><span class="preview-arrow">→</span><span class="preview-new" [class.up]="previewScore > player.score" [class.down]="previewScore < player.score">{{previewScore}}</span></div><div class="score-edit-actions"><button class="btn-ok" (click)="confirmScoreEdit()">✔ Enregistrer</button><button class="btn-cancel" (click)="closeScoreEdit()">✖ Annuler</button></div></div></ng-container></div></div><div class="changelog" *ngIf="recentLog.length > 0"><h3>Derniers changements</h3><div class="log-entry" *ngFor="let entry of recentLog"><span class="log-dot" [style.background]="entry.color"></span><span class="log-name">{{entry.playerName}}</span><span class="log-scores"><span class="log-before">{{entry.before}}</span><span class="log-arrow">→</span><span class="log-after" [class.up]="entry.after > entry.before" [class.down]="entry.after < entry.before">{{entry.after}}</span></span><span class="log-time">{{entry.date | date:'HH:mm:ss'}}</span></div></div></div>
+<div class="container">
+
+  <h1>
+    <img src="assets/icon.png" alt="icône" style="height:40px;vertical-align:middle;margin-right:8px;">
+    Compteur de points
+  </h1>
+
+  <div class="add-player">
+    <input type="text" placeholder="Nom du joueur" [(ngModel)]="newPlayer" (keyup.enter)="addPlayer()">
+    <button (click)="addPlayer()">Ajouter</button>
+  </div>
+
+  <div class="toolbar">
+    <button (click)="toggleSort()">Tri : {{ sortOrder === 'asc' ? 'Croissant' : 'Décroissant' }}</button>
+    <button class="btn-clear" (click)="clearPlayers()" *ngIf="players.length > 0">Vider la liste</button>
+  </div>
+
+  <div *ngFor="let player of players" class="player-card" [style.background-color]="player.color">
+
+    <div class="card-header">
+      <ng-container *ngIf="editingId !== player.id">
+        <span class="player-name">{{ player.name }}</span>
+        <button class="btn-edit" (click)="startEdit(player)" title="Renommer">✏️</button>
+      </ng-container>
+
+      <ng-container *ngIf="editingId === player.id">
+        <input class="edit-input"
+               [(ngModel)]="editingName"
+               (keyup.enter)="confirmEdit(player)"
+               (keyup.escape)="cancelEdit()"
+               autofocus>
+        <div class="edit-actions">
+          <label class="color-label">
+            Couleur :
+            <input type="color" [(ngModel)]="player.color">
+          </label>
+          <button class="btn-ok" (click)="confirmEdit(player)">✔ Valider</button>
+          <button class="btn-cancel" (click)="cancelEdit()">✖ Annuler</button>
+          <button class="btn-delete" (click)="deletePlayer(player.id)">🗑 Supprimer</button>
+        </div>
+      </ng-container>
+    </div>
+
+    <div class="card-score">
+      <ng-container *ngIf="scoreEditId !== player.id">
+        <button class="btn-minus" (click)="removePoints(player)">−</button>
+        <span class="score clickable" (click)="openScoreEdit(player)" title="Modifier le score">{{ player.score }}</span>
+        <button class="btn-plus" (click)="addPoints(player)">+</button>
+        <button class="btn-undo" *ngIf="canUndo(player)" (click)="undoScore(player)" title="Annuler le dernier score">↩</button>
+      </ng-container>
+
+      <ng-container *ngIf="scoreEditId === player.id">
+        <div class="score-edit">
+          <div class="score-edit-modes">
+            <button [class.active]="scoreMode === 'add'" (click)="scoreMode = 'add'">+ Ajouter</button>
+            <button [class.active]="scoreMode === 'sub'" (click)="scoreMode = 'sub'">− Retirer</button>
+            <button [class.active]="scoreMode === 'set'" (click)="scoreMode = 'set'">=  Remplacer</button>
+          </div>
+          <input class="score-input"
+                 type="number"
+                 [(ngModel)]="scoreInput"
+                 autofocus
+                 (keyup.enter)="confirmScoreEdit()"
+                 (keyup.escape)="closeScoreEdit()">
+          <div class="score-preview">
+            <span class="preview-old">{{ player.score }}</span>
+            <span class="preview-arrow">→</span>
+            <span class="preview-new"
+                  [class.up]="previewScore > player.score"
+                  [class.down]="previewScore < player.score">{{ previewScore }}</span>
+          </div>
+          <div class="score-edit-actions">
+            <button class="btn-ok" (click)="confirmScoreEdit()">✔ Enregistrer</button>
+            <button class="btn-cancel" (click)="closeScoreEdit()">✖ Annuler</button>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+  </div>
+
+  <div class="changelog" *ngIf="recentLog.length > 0">
+    <h3>Derniers changements</h3>
+    <div class="log-entry" *ngFor="let entry of recentLog">
+      <span class="log-dot" [style.background]="entry.color"></span>
+      <span class="log-name">{{ entry.playerName }}</span>
+      <span class="log-scores">
+        <span class="log-before">{{ entry.before }}</span>
+        <span class="log-arrow">→</span>
+        <span class="log-after"
+              [class.up]="entry.after > entry.before"
+              [class.down]="entry.after < entry.before">{{ entry.after }}</span>
+      </span>
+      <span class="log-time">{{ entry.date | date:'HH:mm:ss' }}</span>
+    </div>
+  </div>
+
+</div>
+
