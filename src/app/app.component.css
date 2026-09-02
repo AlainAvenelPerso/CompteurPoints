@@ -4,6 +4,11 @@
  .toolbar{display:flex;gap:8px;margin-bottom:16px}
  button{padding:8px 14px;border:none;border-radius:6px;cursor:pointer;font-size:0.9rem}
  .btn-clear{background:#dc3545;color:#fff}
+ .modal-backdrop{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(0,0,0,.45);z-index:10}
+ .confirmation-modal{width:min(100%,420px);padding:24px;background:#fff;border-radius:10px;box-shadow:0 8px 30px rgba(0,0,0,.25);color:#222;text-shadow:none}
+ .confirmation-modal h2{margin:0 0 10px;font-size:1.25rem}
+ .confirmation-modal p{margin:0 0 20px;line-height:1.5;color:#555}
+ .modal-actions{display:flex;justify-content:flex-end;gap:8px}
  .player-card{border:1px solid #ddd;border-radius:10px;padding:12px 16px;margin:8px 0;box-shadow:0 2px 4px rgba(0,0,0,.08);color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.4)}
  .card-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
  .player-name{font-size:1.1rem;font-weight:bold;flex:1}

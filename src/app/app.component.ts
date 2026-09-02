@@ -19,6 +19,7 @@ export class AppComponent {
   scoreEditId:number|null=null;
   scoreInput:number|null=null;
   scoreMode:'add'|'sub'|'set'='add';
+  showClearConfirmation=false;
   private defaultColors=['#4e79a7','#f28e2b','#e15759','#76b7b2','#59a14f','#edc948','#b07aa1','#ff9da7','#9c755f','#bab0ac'];
   private colorIndex=0;
   private scoreHistory:Map<number,number[]>=new Map();
@@ -27,6 +28,9 @@ export class AppComponent {
   get recentLog(){ return this.changelog.slice(-this.maxLog).reverse(); }
   addPlayer(){ if(!this.newPlayer.trim()) return; const color=this.defaultColors[this.colorIndex%this.defaultColors.length]; this.colorIndex++; const id=Date.now(); this.players.push({id,name:this.newPlayer,score:0,delta:1,color}); this.scoreHistory.set(id,[]); this.newPlayer=''; this.sortPlayers(); }
   deletePlayer(id:number){ this.players=this.players.filter(p=>p.id!==id); this.scoreHistory.delete(id); this.editingId=null; }
+  openClearConfirmation(){ this.showClearConfirmation=true; }
+  closeClearConfirmation(){ this.showClearConfirmation=false; }
+  confirmClearPlayers(){ this.clearPlayers(); this.closeClearConfirmation(); }
   clearPlayers(){ this.players=[]; this.scoreHistory.clear(); this.changelog=[]; }
   addPoints(p:Player){ this.pushHistory(p); const before=p.score; p.score+=Number(p.delta); this.addLog(p,before,p.score); this.sortPlayers(); }
   removePoints(p:Player){ this.pushHistory(p); const before=p.score; p.score-=Number(p.delta); this.addLog(p,before,p.score); this.sortPlayers(); }

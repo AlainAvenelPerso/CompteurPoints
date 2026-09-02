@@ -12,7 +12,19 @@
 
   <div class="toolbar">
     <button (click)="toggleSort()">Tri : {{ sortOrder === 'asc' ? 'Croissant' : 'Décroissant' }}</button>
-    <button class="btn-clear" (click)="clearPlayers()" *ngIf="players.length > 0">Vider la liste</button>
+    <button class="btn-clear" (click)="openClearConfirmation()" *ngIf="players.length > 0">Vider la liste</button>
+  </div>
+
+  <div class="modal-backdrop" *ngIf="showClearConfirmation" (click)="closeClearConfirmation()">
+    <div class="confirmation-modal" role="dialog" aria-modal="true" aria-labelledby="clear-title"
+         (click)="$event.stopPropagation()" (keyup.escape)="closeClearConfirmation()" tabindex="-1">
+      <h2 id="clear-title">Vider la liste ?</h2>
+      <p>Cette action supprimera tous les joueurs et l'historique des scores.</p>
+      <div class="modal-actions">
+        <button class="btn-cancel" (click)="closeClearConfirmation()">Annuler</button>
+        <button class="btn-delete" (click)="confirmClearPlayers()">Vider la liste</button>
+      </div>
+    </div>
   </div>
 
   <div *ngFor="let player of players" class="player-card" [style.background-color]="player.color">
